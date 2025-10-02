@@ -27,21 +27,39 @@ Launches the test runner in interactive watch mode.
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
+## Supabase Setup
+
+We use Supabase for authentication, storage, and database access.
+
+1) Install dependencies:
+   ```
+   npm install
+   ```
+
+2) Configure environment variables:
+   - Copy `.env.sample` to `.env`
+   - Fill in:
+     - `REACT_APP_SUPABASE_URL`
+     - `REACT_APP_SUPABASE_ANON_KEY`
+   - Never commit `.env` (it is ignored by default).
+
+3) Supabase client location:
+   - `src/lib/supabaseClient.js`
+   - Import usage examples:
+     ```js
+     import supabase from './lib/supabaseClient';
+     // or named:
+     import { getSupabaseClient } from './lib/supabaseClient';
+     ```
+
+4) Optional (auth email redirect):
+   - Set `REACT_APP_SITE_URL` if you implement email-based auth flows.
+
 ## Customization
 
 ### Colors
 
-The main brand colors are defined as CSS variables in `src/App.css`:
-
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+The main brand colors are defined at runtime via CSS variables using `src/theme.js`.
 
 ### Components
 
