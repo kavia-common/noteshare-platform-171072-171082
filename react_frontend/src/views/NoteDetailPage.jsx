@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Container from '../components/layout/Container';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import { deleteNote, fetchNoteById, getSignedUrl } from '../lib/notesService';
@@ -163,32 +162,24 @@ export default function NoteDetailPage() {
 
   if (loading) {
     return (
-      <main className="main">
-        <Container>
-          <section style={{ display: 'grid', gap: 12 }}>
-            <LoadingSkeleton variant="card" lines={3} ariaLabel="Loading note header" />
-            <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 16 }}>
-              <LoadingSkeleton variant="thumbnail" height={640} ariaLabel="Loading PDF preview" />
-              <LoadingSkeleton variant="card" lines={6} ariaLabel="Loading note details" />
-            </div>
-          </section>
-        </Container>
-      </main>
+      <section style={{ display: 'grid', gap: 12 }}>
+        <LoadingSkeleton variant="card" lines={3} ariaLabel="Loading note header" />
+        <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+          <LoadingSkeleton variant="thumbnail" height={640} ariaLabel="Loading PDF preview" />
+          <LoadingSkeleton variant="card" lines={6} ariaLabel="Loading note details" />
+        </div>
+      </section>
     );
   }
 
   if (loadError || !note) {
     return (
-      <main className="main">
-        <Container>
-          <ErrorState
-            title="Could not load note"
-            message={loadError || 'Unknown error'}
-            onRetry={() => loadNote()}
-            secondary={{ label: 'Back to Browse', onClick: () => navigate('/browse') }}
-          />
-        </Container>
-      </main>
+      <ErrorState
+        title="Could not load note"
+        message={loadError || 'Unknown error'}
+        onRetry={() => loadNote()}
+        secondary={{ label: 'Back to Browse', onClick: () => navigate('/browse') }}
+      />
     );
   }
 
@@ -198,130 +189,126 @@ export default function NoteDetailPage() {
     : '—';
 
   return (
-    <main className="main">
-      <Container>
-        <section className="surface surface-animate" style={{ padding: 14 }}>
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-            <div style={{ display: 'grid', gap: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h2 style={{ margin: 0 }}>{note.title || 'Untitled'}</h2>
-                {note.category ? <Badge variant="neutral" size="sm">{note.category}</Badge> : null}
-              </div>
-              {note.description ? (
-                <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>{note.description}</p>
-              ) : null}
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button variant="outline" onClick={() => navigate('/browse')} aria-label="Back to browse">Back</Button>
-              <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
-                {downloading ? 'Preparing…' : 'Download'}
-              </Button>
+    <section className="surface surface-animate" style={{ padding: 14 }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: 'grid', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <h2 style={{ margin: 0 }}>{note.title || 'Untitled'}</h2>
+            {note.category ? <Badge variant="neutral" size="sm">{note.category}</Badge> : null}
+          </div>
+          {note.description ? (
+            <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>{note.description}</p>
+          ) : null}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="outline" onClick={() => navigate('/browse')} aria-label="Back to browse">Back</Button>
+          <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
+            {downloading ? 'Preparing…' : 'Download'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Responsive layout: preview + side panel */}
+      <div className="grid" style={{ marginTop: 14, gridTemplateColumns: '2fr 1fr' }}>
+        {/* PDF Preview */}
+        <div className="surface" style={{ padding: 10, minHeight: 480 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <div style={{ fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>Preview</div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <Button variant="subtle" size="sm" onClick={refreshSigned} aria-label="Refresh preview link" title="Refresh preview link">Refresh link</Button>
+              <Button variant="outline" size="sm" onClick={onDownload} aria-label="Open PDF in new tab" title="Open PDF in new tab">Open in new tab</Button>
             </div>
           </div>
 
-          {/* Responsive layout: preview + side panel */}
-          <div className="grid" style={{ marginTop: 14, gridTemplateColumns: '2fr 1fr' }}>
-            {/* PDF Preview */}
-            <div className="surface" style={{ padding: 10, minHeight: 480 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <div style={{ fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>Preview</div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <Button variant="subtle" size="sm" onClick={refreshSigned} aria-label="Refresh preview link" title="Refresh preview link">Refresh link</Button>
-                  <Button variant="outline" size="sm" onClick={onDownload} aria-label="Open PDF in new tab" title="Open PDF in new tab">Open in new tab</Button>
-                </div>
-              </div>
-
-              {signError ? (
-                <div className="surface" role="alert" style={{ padding: 10, borderColor: 'rgba(239,68,68,0.35)' }}>
-                  <div style={{ color: 'var(--color-error)' }}>Preview unavailable</div>
-                  <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>{signError}</div>
-                </div>
-              ) : signedUrl ? (
-                <div style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-                  {/* Using object for better PDF handling fallback */}
-                  <object
-                    data={signedUrl}
-                    type="application/pdf"
-                    width="100%"
-                    height="640px"
-                    aria-label="PDF preview"
-                  >
-                    <iframe title="PDF preview" src={signedUrl} width="100%" height="640px" style={{ border: 'none' }}>
-                      {/* Fallback content */}
-                      <p>Your browser does not support embedded PDFs. <a href={signedUrl} target="_blank" rel="noreferrer">Open the PDF</a>.</p>
-                    </iframe>
-                  </object>
-                </div>
-              ) : (
-                <div className="surface" style={{ padding: 10 }}>
-                  <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>
-                    Generating secure preview link...
-                  </div>
-                  <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
-                    <div
-                      role="progressbar"
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={45}
-                      style={{
-                        width: '45%',
-                        height: '100%',
-                        borderRadius: 999,
-                        background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
-                        transition: 'width 300ms ease',
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
+          {signError ? (
+            <div className="surface" role="alert" style={{ padding: 10, borderColor: 'rgba(239,68,68,0.35)' }}>
+              <div style={{ color: 'var(--color-error)' }}>Preview unavailable</div>
+              <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>{signError}</div>
             </div>
-
-            {/* Side panel */}
-            <aside className="surface" style={{ padding: 12 }}>
-              <h3 style={{ marginTop: 2, marginBottom: 8, fontSize: 'var(--font-md)' }}>Details</h3>
-              <div style={{ display: 'grid', gap: 10 }}>
-                <MetaItem label="Owner">
-                  <span>{note.user_email || note.owner_email || 'Owner hidden'}</span>
-                </MetaItem>
-                <MetaItem label="Created at" value={created} />
-                <MetaItem label="File size" value={fileSizeText} />
-                <MetaItem label="Pages" value={note.page_count || '—'} />
-                <MetaItem label="Category" value={note.category || '—'} />
-                <MetaItem label="Tags">
-                  <Tags list={note.tags || []} />
-                </MetaItem>
+          ) : signedUrl ? (
+            <div style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+              {/* Using object for better PDF handling fallback */}
+              <object
+                data={signedUrl}
+                type="application/pdf"
+                width="100%"
+                height="640px"
+                aria-label="PDF preview"
+              >
+                <iframe title="PDF preview" src={signedUrl} width="100%" height="640px" style={{ border: 'none' }}>
+                  {/* Fallback content */}
+                  <p>Your browser does not support embedded PDFs. <a href={signedUrl} target="_blank" rel="noreferrer">Open the PDF</a>.</p>
+                </iframe>
+              </object>
+            </div>
+          ) : (
+            <div className="surface" style={{ padding: 10 }}>
+              <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>
+                Generating secure preview link...
               </div>
+              <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
+                <div
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={45}
+                  style={{
+                    width: '45%',
+                    height: '100%',
+                    borderRadius: 999,
+                    background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
+                    transition: 'width 300ms ease',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
 
-              <div style={{ marginTop: 14, display: 'grid', gap: 8 }}>
-                <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
-                  {downloading ? 'Preparing…' : 'Download'}
+        {/* Side panel */}
+        <aside className="surface" style={{ padding: 12 }}>
+          <h3 style={{ marginTop: 2, marginBottom: 8, fontSize: 'var(--font-md)' }}>Details</h3>
+          <div style={{ display: 'grid', gap: 10 }}>
+            <MetaItem label="Owner">
+              <span>{note.user_email || note.owner_email || 'Owner hidden'}</span>
+            </MetaItem>
+            <MetaItem label="Created at" value={created} />
+            <MetaItem label="File size" value={fileSizeText} />
+            <MetaItem label="Pages" value={note.page_count || '—'} />
+            <MetaItem label="Category" value={note.category || '—'} />
+            <MetaItem label="Tags">
+              <Tags list={note.tags || []} />
+            </MetaItem>
+          </div>
+
+          <div style={{ marginTop: 14, display: 'grid', gap: 8 }}>
+            <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
+              {downloading ? 'Preparing…' : 'Download'}
+            </Button>
+            {isOwner ? (
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button variant="subtle" onClick={onEdit} aria-label="Edit note">Edit</Button>
+                <Button variant="danger" onClick={onDelete} disabled={deleting} aria-label="Delete note">
+                  {deleting ? 'Deleting…' : 'Delete'}
                 </Button>
-                {isOwner ? (
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <Button variant="subtle" onClick={onEdit} aria-label="Edit note">Edit</Button>
-                    <Button variant="danger" onClick={onDelete} disabled={deleting} aria-label="Delete note">
-                      {deleting ? 'Deleting…' : 'Delete'}
-                    </Button>
-                  </div>
-                ) : null}
               </div>
-            </aside>
+            ) : null}
           </div>
+        </aside>
+      </div>
 
-          {/* Mobile modal-like actions panel */}
-          <div
-            className="surface"
-            style={{
-              display: 'none',
-              padding: 10,
-              marginTop: 12,
-            }}
-          >
-            {/* Reserved for mobile-specific actions if needed */}
-          </div>
-        </section>
-      </Container>
+      {/* Mobile modal-like actions panel */}
+      <div
+        className="surface"
+        style={{
+          display: 'none',
+          padding: 10,
+          marginTop: 12,
+        }}
+      >
+        {/* Reserved for mobile-specific actions if needed */}
+      </div>
 
       <style>
         {`
@@ -333,6 +320,6 @@ export default function NoteDetailPage() {
           }
         `}
       </style>
-    </main>
+    </section>
   );
 }

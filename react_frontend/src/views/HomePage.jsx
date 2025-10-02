@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Container from '../components/layout/Container';
 import Button from '../components/common/Button';
 import FiltersBar from '../components/common/FiltersBar';
 import NoteCard from '../components/common/NoteCard';
@@ -105,59 +104,57 @@ export default function HomePage() {
   );
 
   return (
-    <main className="main">
-      <Container>
-        <section className="surface hero surface-animate">
-          <div>
-            <h1 className="hero-title">Share and discover high-quality notes</h1>
-            <p className="hero-subtitle">Upload PDFs, browse categories, and download notes from the community.</p>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="primary" onClick={() => (window.location.href = '/upload')} aria-label="Open upload page">Upload</Button>
-            <Button variant="outline" onClick={() => (window.location.href = '/browse')} aria-label="Open browse page">Browse</Button>
-          </div>
-        </section>
+    <>
+      <section className="surface hero surface-animate">
+        <div>
+          <h1 className="hero-title">Share and discover high-quality notes</h1>
+          <p className="hero-subtitle">Upload PDFs, browse categories, and download notes from the community.</p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Button variant="primary" onClick={() => (window.location.href = '/upload')} aria-label="Open upload page">Upload</Button>
+          <Button variant="outline" onClick={() => (window.location.href = '/browse')} aria-label="Open browse page">Browse</Button>
+        </div>
+      </section>
 
-        <FiltersBar initial={{ q: search, cat: category, tags: tagsString }} onApply={onApplyFilters} busy={loading} />
+      <FiltersBar initial={{ q: search, cat: category, tags: tagsString }} onApply={onApplyFilters} busy={loading} />
 
-        <section style={{ marginTop: 16, display: 'grid', gap: 12 }}>
-          {error ? (
-            <ErrorState
-              title="We couldn’t load notes"
-              message={error}
-              onRetry={() => load()}
-              secondary={{ label: 'Reset filters', onClick: () => { reset(); setPage(1); } }}
-            />
-          ) : null}
+      <section style={{ marginTop: 16, display: 'grid', gap: 12 }}>
+        {error ? (
+          <ErrorState
+            title="We couldn’t load notes"
+            message={error}
+            onRetry={() => load()}
+            secondary={{ label: 'Reset filters', onClick: () => { reset(); setPage(1); } }}
+          />
+        ) : null}
 
-          {!error && loading ? renderLoadingGrid() : null}
+        {!error && loading ? renderLoadingGrid() : null}
 
-          {!error && !loading && notes.length === 0 ? (
-            <EmptyState
-              title="No notes match your filters"
-              description="Try adjusting search terms, selecting another category, or clearing tags."
-              secondary={{
-                label: 'Clear filters',
-                onClick: () => { reset(); setPage(1); },
-                ariaLabel: 'Clear filters',
-              }}
-              badge="Ocean Professional"
-              icon="🌊"
-            />
-          ) : null}
+        {!error && !loading && notes.length === 0 ? (
+          <EmptyState
+            title="No notes match your filters"
+            description="Try adjusting search terms, selecting another category, or clearing tags."
+            secondary={{
+              label: 'Clear filters',
+              onClick: () => { reset(); setPage(1); },
+              ariaLabel: 'Clear filters',
+            }}
+            badge="Ocean Professional"
+            icon="🌊"
+          />
+        ) : null}
 
-          {!error && !loading && notes.length > 0 ? (
-            <>
-              <div className="grid grid-3">
-                {notes.map((n) => (
-                  <NoteCard key={n.id} note={n} onOpen={onOpen} onDownload={onDownload} />
-                ))}
-              </div>
-              <Pagination />
-            </>
-          ) : null}
-        </section>
-      </Container>
-    </main>
+        {!error && !loading && notes.length > 0 ? (
+          <>
+            <div className="grid grid-3">
+              {notes.map((n) => (
+                <NoteCard key={n.id} note={n} onOpen={onOpen} onDownload={onDownload} />
+              ))}
+            </div>
+            <Pagination />
+          </>
+        ) : null}
+      </section>
+    </>
   );
 }

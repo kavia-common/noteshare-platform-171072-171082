@@ -5,7 +5,13 @@ import HomePage from '../views/HomePage';
 
 test('renders NoteShare brand in navbar', () => {
   const router = createMemoryRouter(
-    [{ path: '/', element: <App />, children: [{ path: '/', element: <HomePage /> }] }],
+    [
+      {
+        path: '/',
+        element: <App />,
+        children: [{ index: true, element: <HomePage /> }],
+      },
+    ],
     { initialEntries: ['/'] }
   );
   render(<RouterProvider router={router} />);

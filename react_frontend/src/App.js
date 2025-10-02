@@ -8,6 +8,7 @@ import UploadModal from './components/upload/UploadModal';
 import AuthModal from './components/auth/AuthModal';
 import { useAuth } from './hooks/useAuth';
 import { useUI } from './contexts/UIContext';
+import Container from './components/layout/Container';
 
 /**
  * PUBLIC_INTERFACE
@@ -40,7 +41,13 @@ function App() {
   return (
     <div className="App">
       <Navbar mode={mode} onToggleTheme={toggleTheme} />
-      <Outlet />
+
+      {/* Ensure consistent horizontal padding even for pages that don't include Container */}
+      <div className="main">
+        <Container>
+          <Outlet />
+        </Container>
+      </div>
 
       <FloatingActionButton
         onUploadClick={openUpload}
