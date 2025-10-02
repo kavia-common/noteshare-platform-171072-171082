@@ -86,7 +86,18 @@ export default function Navbar({ mode = 'light', onToggleTheme }) {
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginLeft: 10 }}>
             <Badge variant="primary" size="sm">Ocean Professional</Badge>
-            <Button variant={location.pathname === '/upload' ? 'primary' : 'outline'} onClick={() => navigate('/upload')}>
+            <Button
+              variant={location.pathname === '/upload' ? 'primary' : 'outline'}
+              onClick={() => {
+                // If not authenticated, open auth modal instead of navigating.
+                if (!user) {
+                  setAuthDefaultMode('login');
+                  setAuthOpen(true);
+                } else {
+                  navigate('/upload');
+                }
+              }}
+            >
               Upload
             </Button>
             <Button variant="subtle" onClick={() => navigate('/profile')}>
