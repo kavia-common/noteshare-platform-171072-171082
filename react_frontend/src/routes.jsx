@@ -5,6 +5,7 @@ import BrowsePage from './views/BrowsePage';
 import UploadPage from './views/UploadPage';
 import ProfilePage from './views/ProfilePage';
 import NotFoundPage from './views/NotFoundPage';
+import NoteDetailPage from './views/NoteDetailPage';
 
 /**
  * PUBLIC_INTERFACE
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
   { path: '/browse', element: <BrowsePage /> },
   { path: '/upload', element: <UploadPage /> },
   { path: '/profile', element: <ProfilePage /> },
+  { path: '/notes/:id', element: <NoteDetailPage /> },
   { path: '*', element: <NotFoundPage /> },
 ]);
 

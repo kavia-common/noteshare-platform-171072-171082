@@ -14,6 +14,12 @@ import Badge from './Badge';
 export default function NoteCard({ note, onOpen, onDownload }) {
   const { id, title, description, category, tags = [], created_at } = note || {};
 
+  const goOpen = () => {
+    if (onOpen) return onOpen(id);
+    // default navigation to detail route
+    if (id) window.location.href = `/notes/${id}`;
+  };
+
   return (
     <article
       className="surface surface-animate"
@@ -57,7 +63,7 @@ export default function NoteCard({ note, onOpen, onDownload }) {
           ) : null}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <Button variant="outline" size="sm" onClick={() => onOpen?.(id)}>Open</Button>
+          <Button variant="outline" size="sm" onClick={goOpen}>Open</Button>
           <Button variant="primary" size="sm" onClick={() => onDownload?.(note)}>Download</Button>
         </div>
       </div>

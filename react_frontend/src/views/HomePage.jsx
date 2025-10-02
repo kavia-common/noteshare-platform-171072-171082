@@ -67,8 +67,8 @@ export default function HomePage() {
   };
 
   const onOpen = (id) => {
-    // Future: route to detail page
-    window.location.href = `/browse?open=${id}`;
+    // Route to the dedicated Note Detail page
+    window.location.href = `/notes/${id}`;
   };
 
   const onDownload = (_note) => {
