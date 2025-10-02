@@ -3,6 +3,8 @@ import Container from '../components/layout/Container';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import { useAuth } from '../hooks/useAuth';
+import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import EmptyState from '../components/common/EmptyState';
 
 export default function ProfilePage() {
   const { user, session, loading, signOut } = useAuth();
@@ -32,7 +34,10 @@ export default function ProfilePage() {
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--color-text-muted)' }} aria-live="polite">Loading session...</div>
+            <div style={{ display: 'grid', gap: 12 }}>
+              <LoadingSkeleton variant="card" lines={3} ariaLabel="Loading account" />
+              <LoadingSkeleton variant="card" lines={4} ariaLabel="Loading notes" />
+            </div>
           ) : user ? (
             <>
               <div className="surface" style={{ padding: 16 }}>
@@ -49,18 +54,21 @@ export default function ProfilePage() {
 
               <div className="surface" style={{ padding: 16 }}>
                 <h3 style={{ marginTop: 0, marginBottom: 10, fontSize: 'var(--font-md)' }}>Your notes</h3>
-                <p style={{ color: 'var(--color-text-muted)', marginTop: 0 }}>
-                  Your uploaded notes will appear here. (Integration with storage/database coming soon.)
-                </p>
+                <EmptyState
+                  title="No uploads yet"
+                  description="Your uploaded notes will appear here once you start sharing."
+                  primaryAction={{ label: 'Upload a note', onClick: () => (window.location.href = '/upload') }}
+                  icon="📚"
+                />
               </div>
             </>
           ) : (
-            <div className="surface" style={{ padding: 16 }}>
-              <h3 style={{ marginTop: 0 }}>You are not signed in</h3>
-              <p style={{ color: 'var(--color-text-muted)' }}>
-                Please use the Login or Sign Up buttons in the top-right to access your profile.
-              </p>
-            </div>
+            <EmptyState
+              title="You are not signed in"
+              description="Use the Login or Sign Up buttons in the top-right to access your profile."
+              primaryAction={{ label: 'Login', onClick: () => (window.location.href = '/upload') }}
+              icon="🔑"
+            />
           )}
         </section>
       </Container>

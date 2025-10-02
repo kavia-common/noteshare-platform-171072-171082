@@ -5,6 +5,9 @@ import FiltersBar from '../components/common/FiltersBar';
 import NoteCard from '../components/common/NoteCard';
 import { fetchNotes } from '../lib/notesService';
 import { useSearchFilters } from '../contexts/SearchFilterContext';
+import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import EmptyState from '../components/common/EmptyState';
+import ErrorState from '../components/common/ErrorState';
 
 /**
  * PUBLIC_INTERFACE
@@ -77,33 +80,6 @@ export default function HomePage() {
     alert('Download coming soon in Note Detail view.');
   };
 
-  const EmptyState = () => (
-    <div className="surface surface-animate" style={{ padding: 18, textAlign: 'center' }}>
-      <h3 style={{ marginTop: 0 }}>No notes match your filters</h3>
-      <p style={{ color: 'var(--color-text-muted)', marginTop: 6 }}>
-        Try adjusting search terms, selecting another category, or clearing tags.
-      </p>
-      <div style={{ marginTop: 10 }}>
-        <Button variant="outline" onClick={() => { reset(); setPage(1); }} aria-label="Clear filters">
-          Clear filters
-        </Button>
-      </div>
-    </div>
-  );
-
-  const ErrorState = () => (
-    <div className="surface surface-animate" role="alert" aria-live="assertive" style={{ padding: 18, borderColor: 'rgba(239,68,68,0.35)' }}>
-      <h3 style={{ marginTop: 0, color: 'var(--color-error)' }}>We couldn’t load notes</h3>
-      <p style={{ color: 'var(--color-text-muted)' }}>{error}</p>
-      <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-        <Button variant="outline" onClick={() => load()} aria-label="Retry loading notes">Retry</Button>
-        <Button variant="subtle" onClick={() => { reset(); setPage(1); }} aria-label="Reset filters">
-          Reset filters
-        </Button>
-      </div>
-    </div>
-  );
-
   const Pagination = () => (
     <div className="surface surface-animate" style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
       <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }} aria-live="polite">
@@ -117,6 +93,14 @@ export default function HomePage() {
           Next
         </Button>
       </div>
+    </div>
+  );
+
+  const renderLoadingGrid = () => (
+    <div className="grid grid-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <LoadingSkeleton key={i} variant="card" lines={4} ariaLabel="Loading note card" />
+      ))}
     </div>
   );
 
@@ -137,32 +121,30 @@ export default function HomePage() {
         <FiltersBar initial={{ q: search, cat: category, tags: tagsString }} onApply={onApplyFilters} busy={loading} />
 
         <section style={{ marginTop: 16, display: 'grid', gap: 12 }}>
-          {error ? <ErrorState /> : null}
-
-          {!error && loading ? (
-            <div className="surface surface-animate" style={{ padding: 18 }}>
-              <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>
-                Loading notes...
-              </div>
-              <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
-                <div
-                  role="progressbar"
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={60}
-                  style={{
-                    width: '60%',
-                    height: '100%',
-                    borderRadius: 999,
-                    background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
-                    transition: 'width 300ms ease',
-                  }}
-                />
-              </div>
-            </div>
+          {error ? (
+            <ErrorState
+              title="We couldn’t load notes"
+              message={error}
+              onRetry={() => load()}
+              secondary={{ label: 'Reset filters', onClick: () => { reset(); setPage(1); } }}
+            />
           ) : null}
 
-          {!error && !loading && notes.length === 0 ? <EmptyState /> : null}
+          {!error && loading ? renderLoadingGrid() : null}
+
+          {!error && !loading && notes.length === 0 ? (
+            <EmptyState
+              title="No notes match your filters"
+              description="Try adjusting search terms, selecting another category, or clearing tags."
+              secondary={{
+                label: 'Clear filters',
+                onClick: () => { reset(); setPage(1); },
+                ariaLabel: 'Clear filters',
+              }}
+              badge="Ocean Professional"
+              icon="🌊"
+            />
+          ) : null}
 
           {!error && !loading && notes.length > 0 ? (
             <>

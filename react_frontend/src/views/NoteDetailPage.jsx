@@ -5,6 +5,8 @@ import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import { deleteNote, fetchNoteById, getSignedUrl } from '../lib/notesService';
 import { useAuth } from '../hooks/useAuth';
+import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import ErrorState from '../components/common/ErrorState';
 
 /**
  * PUBLIC_INTERFACE
@@ -163,24 +165,11 @@ export default function NoteDetailPage() {
     return (
       <main className="main">
         <Container>
-          <section className="surface surface-animate" style={{ padding: 18 }}>
-            <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }} aria-live="polite">
-              Loading note...
-            </div>
-            <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
-              <div
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={55}
-                style={{
-                  width: '55%',
-                  height: '100%',
-                  borderRadius: 999,
-                  background: 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
-                  transition: 'width 300ms ease',
-                }}
-              />
+          <section style={{ display: 'grid', gap: 12 }}>
+            <LoadingSkeleton variant="card" lines={3} ariaLabel="Loading note header" />
+            <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+              <LoadingSkeleton variant="thumbnail" height={640} ariaLabel="Loading PDF preview" />
+              <LoadingSkeleton variant="card" lines={6} ariaLabel="Loading note details" />
             </div>
           </section>
         </Container>
@@ -192,14 +181,12 @@ export default function NoteDetailPage() {
     return (
       <main className="main">
         <Container>
-          <section className="surface surface-animate" role="alert" style={{ padding: 18, borderColor: 'rgba(239,68,68,0.35)' }}>
-            <h2 style={{ marginTop: 0, color: 'var(--color-error)' }}>Could not load note</h2>
-            <p style={{ color: 'var(--color-text-muted)' }}>{loadError || 'Unknown error'}</p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button variant="outline" onClick={() => loadNote()} aria-label="Retry loading note">Retry</Button>
-              <Button variant="subtle" onClick={() => navigate('/browse')} aria-label="Back to browse">Back to Browse</Button>
-            </div>
-          </section>
+          <ErrorState
+            title="Could not load note"
+            message={loadError || 'Unknown error'}
+            onRetry={() => loadNote()}
+            secondary={{ label: 'Back to Browse', onClick: () => navigate('/browse') }}
+          />
         </Container>
       </main>
     );
