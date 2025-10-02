@@ -4,11 +4,18 @@ import Button from '../components/common/Button';
 import UploadModal from '../components/upload/UploadModal';
 import { useAuth } from '../hooks/useAuth';
 import AuthModal from '../components/auth/AuthModal';
+import { useUI } from '../contexts/UIContext';
 
 export default function UploadPage() {
   const { user } = useAuth();
-  const [open, setOpen] = React.useState(true);
-  const [authOpen, setAuthOpen] = React.useState(!user);
+  const { openAuth, authOpen, closeAuth, openUpload, uploadOpen, closeUpload } = useUI();
+
+  React.useEffect(() => {
+    // When entering upload page, auto-open the relevant modal based on auth state
+    if (user) openUpload();
+    else openAuth('login');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <main className="main">
@@ -19,15 +26,15 @@ export default function UploadPage() {
             Choose a PDF file, add details, and upload it to share with the community.
           </p>
           <div style={{ marginTop: 12 }}>
-            <Button variant="primary" onClick={() => (user ? setOpen(true) : setAuthOpen(true))}>
+            <Button variant="primary" onClick={() => (user ? openUpload() : openAuth('login'))}>
               Open Upload
             </Button>
           </div>
         </section>
       </Container>
 
-      <UploadModal open={!!user && open} onClose={() => setOpen(false)} onSuccess={() => {}} />
-      <AuthModal open={!user && authOpen} onClose={() => setAuthOpen(false)} defaultMode="login" />
+      <UploadModal open={!!user && uploadOpen} onClose={closeUpload} onSuccess={() => {}} />
+      <AuthModal open={!user && authOpen} onClose={closeAuth} defaultMode="login" />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import FloatingActionButton from './components/upload/FloatingActionButton';
 import UploadModal from './components/upload/UploadModal';
 import AuthModal from './components/auth/AuthModal';
 import { useAuth } from './hooks/useAuth';
+import { useUI } from './contexts/UIContext';
 
 /**
  * PUBLIC_INTERFACE
@@ -16,10 +17,16 @@ import { useAuth } from './hooks/useAuth';
  */
 function App() {
   const [mode, setMode] = useState('light');
-  const [uploadOpen, setUploadOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
-  const [authDefaultMode, setAuthDefaultMode] = useState('login');
   const { user } = useAuth();
+  const {
+    uploadOpen,
+    openUpload,
+    closeUpload,
+    authOpen,
+    authDefaultMode,
+    openAuth,
+    closeAuth,
+  } = useUI();
 
   useEffect(() => {
     applyThemeToRoot(mode === 'dark');
@@ -30,14 +37,6 @@ function App() {
     setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const openUpload = () => setUploadOpen(true);
-  const closeUpload = () => setUploadOpen(false);
-  const openAuthLogin = () => {
-    setAuthDefaultMode('login');
-    setAuthOpen(true);
-  };
-  const closeAuth = () => setAuthOpen(false);
-
   return (
     <div className="App">
       <Navbar mode={mode} onToggleTheme={toggleTheme} />
@@ -45,7 +44,7 @@ function App() {
 
       <FloatingActionButton
         onUploadClick={openUpload}
-        onRequireAuth={openAuthLogin}
+        onRequireAuth={() => openAuth('login')}
         visible={true}
       />
 

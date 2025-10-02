@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import { useAuth } from '../../hooks/useAuth';
@@ -17,6 +17,11 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
   const [mode, setMode] = useState(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Keep internal mode in sync with prop when it changes while modal is (re-)opened
+  useEffect(() => {
+    if (open) setMode(defaultMode);
+  }, [defaultMode, open]);
 
   if (!open) return null;
 

@@ -4,6 +4,7 @@ import Button from '../components/common/Button';
 import FiltersBar from '../components/common/FiltersBar';
 import NoteCard from '../components/common/NoteCard';
 import { fetchNotes } from '../lib/notesService';
+import { useSearchFilters } from '../contexts/SearchFilterContext';
 
 /**
  * PUBLIC_INTERFACE
@@ -14,7 +15,7 @@ import { fetchNotes } from '../lib/notesService';
 export default function HomePage() {
   const PAGE_SIZE = 12;
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState({ search: '', category: '', tagsString: '' });
+  const { search, category, tagsString, apply, reset } = useSearchFilters();
   const [notes, setNotes] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -23,10 +24,10 @@ export default function HomePage() {
   const totalPages = useMemo(() => Math.max(1, Math.ceil((count || 0) / PAGE_SIZE)), [count]);
 
   const parsedTags = useMemo(() => {
-    const raw = query.tagsString || '';
+    const raw = tagsString || '';
     if (!raw.trim()) return [];
     return raw.split(',').map((t) => t.trim()).filter(Boolean);
-  }, [query.tagsString]);
+  }, [tagsString]);
 
   const load = async () => {
     setLoading(true);
@@ -35,8 +36,8 @@ export default function HomePage() {
       const { data, count: total, error: err } = await fetchNotes({
         limit: PAGE_SIZE,
         offset: (page - 1) * PAGE_SIZE,
-        search: query.search,
-        category: query.category,
+        search,
+        category,
         tags: parsedTags,
       });
       if (err) {
@@ -59,11 +60,11 @@ export default function HomePage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, query.search, query.category, query.tagsString]);
+  }, [page, search, category, tagsString]);
 
-  const onApplyFilters = ({ search, category, tagsString }) => {
+  const onApplyFilters = ({ search: s, category: c, tagsString: t }) => {
     setPage(1);
-    setQuery({ search, category, tagsString });
+    apply({ search: s, category: c, tagsString: t });
   };
 
   const onOpen = (id) => {
@@ -83,7 +84,7 @@ export default function HomePage() {
         Try adjusting search terms, selecting another category, or clearing tags.
       </p>
       <div style={{ marginTop: 10 }}>
-        <Button variant="outline" onClick={() => { setQuery({ search: '', category: '', tagsString: '' }); setPage(1); }}>
+        <Button variant="outline" onClick={() => { reset(); setPage(1); }}>
           Clear filters
         </Button>
       </div>
@@ -96,7 +97,7 @@ export default function HomePage() {
       <p style={{ color: 'var(--color-text-muted)' }}>{error}</p>
       <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
         <Button variant="outline" onClick={() => load()}>Retry</Button>
-        <Button variant="subtle" onClick={() => { setQuery({ search: '', category: '', tagsString: '' }); setPage(1); }}>
+        <Button variant="subtle" onClick={() => { reset(); setPage(1); }}>
           Reset filters
         </Button>
       </div>
@@ -133,7 +134,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <FiltersBar initial={{ q: '', cat: '', tags: '' }} onApply={onApplyFilters} busy={loading} />
+        <FiltersBar initial={{ q: search, cat: category, tags: tagsString }} onApply={onApplyFilters} busy={loading} />
 
         <section style={{ marginTop: 16, display: 'grid', gap: 12 }}>
           {error ? <ErrorState /> : null}

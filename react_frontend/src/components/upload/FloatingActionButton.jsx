@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import Button from '../common/Button';
 
 /**
  * PUBLIC_INTERFACE
