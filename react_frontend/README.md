@@ -41,6 +41,7 @@ We use Supabase for authentication, storage, and database access.
    - Fill in:
      - `REACT_APP_SUPABASE_URL`
      - `REACT_APP_SUPABASE_ANON_KEY`
+     - Optionally `REACT_APP_SITE_URL` (used for auth email redirects)
    - Never commit `.env` (it is ignored by default).
 
 3) Supabase client location:
@@ -52,8 +53,11 @@ We use Supabase for authentication, storage, and database access.
      import { getSupabaseClient } from './lib/supabaseClient';
      ```
 
-4) Optional (auth email redirect):
-   - Set `REACT_APP_SITE_URL` if you implement email-based auth flows.
+4) Authentication UI
+   - An `AuthModal` provides Login / Sign Up with email/password.
+   - The `Navbar` shows Login/Sign Up if logged out, and email + Logout if logged in.
+   - Session state is provided by `AuthProvider` and the `useAuth` hook.
+   - Profile page shows current session info and a placeholder for user's notes.
 
 ## Customization
 
