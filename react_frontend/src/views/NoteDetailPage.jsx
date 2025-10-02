@@ -125,8 +125,8 @@ export default function NoteDetailPage() {
 
   const onDelete = async () => {
     if (!isOwner) return;
-    const confirm = window.confirm('Delete this note? This cannot be undone.');
-    if (!confirm) return;
+    const confirmDel = window.confirm('Delete this note? This cannot be undone.');
+    if (!confirmDel) return;
     setDeleting(true);
     try {
       const { success, error } = await deleteNote(id);
@@ -164,11 +164,15 @@ export default function NoteDetailPage() {
       <main className="main">
         <Container>
           <section className="surface surface-animate" style={{ padding: 18 }}>
-            <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>
+            <div style={{ marginBottom: 6, fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }} aria-live="polite">
               Loading note...
             </div>
             <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
               <div
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={55}
                 style={{
                   width: '55%',
                   height: '100%',
@@ -192,8 +196,8 @@ export default function NoteDetailPage() {
             <h2 style={{ marginTop: 0, color: 'var(--color-error)' }}>Could not load note</h2>
             <p style={{ color: 'var(--color-text-muted)' }}>{loadError || 'Unknown error'}</p>
             <div style={{ display: 'flex', gap: 8 }}>
-              <Button variant="outline" onClick={() => loadNote()}>Retry</Button>
-              <Button variant="subtle" onClick={() => navigate('/browse')}>Back to Browse</Button>
+              <Button variant="outline" onClick={() => loadNote()} aria-label="Retry loading note">Retry</Button>
+              <Button variant="subtle" onClick={() => navigate('/browse')} aria-label="Back to browse">Back to Browse</Button>
             </div>
           </section>
         </Container>
@@ -222,8 +226,8 @@ export default function NoteDetailPage() {
               ) : null}
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <Button variant="outline" onClick={() => navigate('/browse')}>Back</Button>
-              <Button variant="primary" onClick={onDownload} disabled={downloading}>
+              <Button variant="outline" onClick={() => navigate('/browse')} aria-label="Back to browse">Back</Button>
+              <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
                 {downloading ? 'Preparing…' : 'Download'}
               </Button>
             </div>
@@ -236,8 +240,8 @@ export default function NoteDetailPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div style={{ fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>Preview</div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <Button variant="subtle" size="sm" onClick={refreshSigned}>Refresh link</Button>
-                  <Button variant="outline" size="sm" onClick={onDownload}>Open in new tab</Button>
+                  <Button variant="subtle" size="sm" onClick={refreshSigned} aria-label="Refresh preview link" title="Refresh preview link">Refresh link</Button>
+                  <Button variant="outline" size="sm" onClick={onDownload} aria-label="Open PDF in new tab" title="Open PDF in new tab">Open in new tab</Button>
                 </div>
               </div>
 
@@ -254,6 +258,7 @@ export default function NoteDetailPage() {
                     type="application/pdf"
                     width="100%"
                     height="640px"
+                    aria-label="PDF preview"
                   >
                     <iframe title="PDF preview" src={signedUrl} width="100%" height="640px" style={{ border: 'none' }}>
                       {/* Fallback content */}
@@ -268,6 +273,10 @@ export default function NoteDetailPage() {
                   </div>
                   <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
                     <div
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={45}
                       style={{
                         width: '45%',
                         height: '100%',
@@ -298,13 +307,13 @@ export default function NoteDetailPage() {
               </div>
 
               <div style={{ marginTop: 14, display: 'grid', gap: 8 }}>
-                <Button variant="primary" onClick={onDownload} disabled={downloading}>
+                <Button variant="primary" onClick={onDownload} disabled={downloading} aria-label="Download PDF">
                   {downloading ? 'Preparing…' : 'Download'}
                 </Button>
                 {isOwner ? (
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <Button variant="subtle" onClick={onEdit}>Edit</Button>
-                    <Button variant="danger" onClick={onDelete} disabled={deleting}>
+                    <Button variant="subtle" onClick={onEdit} aria-label="Edit note">Edit</Button>
+                    <Button variant="danger" onClick={onDelete} disabled={deleting} aria-label="Delete note">
                       {deleting ? 'Deleting…' : 'Delete'}
                     </Button>
                   </div>
@@ -322,7 +331,7 @@ export default function NoteDetailPage() {
               marginTop: 12,
             }}
           >
-            {/* This block can be toggled via CSS media queries; as a simple approach we keep desktop above. */}
+            {/* Reserved for mobile-specific actions if needed */}
           </div>
         </section>
       </Container>

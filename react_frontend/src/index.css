@@ -38,8 +38,38 @@ input, select, textarea {
   color: inherit;
 }
 
+/* Focus states with sufficient contrast and visible ring */
+:focus {
+  outline: none;
+}
 :focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px var(--color-ring, rgba(37, 99, 235, 0.35));
+  box-shadow: 0 0 0 3px var(--color-ring, rgba(37, 99, 235, 0.5));
   border-radius: 6px;
+}
+
+/* Reduce motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast helper (optional) */
+@media (forced-colors: active) {
+  .surface,
+  .icon-btn,
+  .btn-reset,
+  button,
+  input,
+  select,
+  textarea {
+    forced-color-adjust: none;
+    border-color: CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
 }

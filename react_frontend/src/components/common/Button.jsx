@@ -15,6 +15,8 @@ export default function Button({
   trailingIcon = null,
   className = '',
   disabled = false,
+  type = 'button',
+  'aria-pressed': ariaPressed,
   ...props
 }) {
   const sizeMap = {
@@ -100,6 +102,9 @@ export default function Button({
       className={`btn-reset ${className}`}
       style={style}
       disabled={disabled}
+      type={type}
+      role="button"
+      aria-pressed={ariaPressed}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       {...props}

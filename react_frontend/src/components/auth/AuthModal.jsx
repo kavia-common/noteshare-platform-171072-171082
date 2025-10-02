@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import { useAuth } from '../../hooks/useAuth';
@@ -17,11 +17,27 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
   const [mode, setMode] = useState(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const firstFieldRef = useRef(null);
 
   // Keep internal mode in sync with prop when it changes while modal is (re-)opened
   useEffect(() => {
     if (open) setMode(defaultMode);
   }, [defaultMode, open]);
+
+  // Focus management and Escape to close
+  useEffect(() => {
+    if (!open) return;
+    firstFieldRef.current?.focus?.();
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose?.();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
 
   if (!open) return null;
 
@@ -44,10 +60,15 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
     }
   };
 
+  const titleId = 'auth-modal-title';
+  const descId = 'auth-modal-desc';
+
   return (
     <div
       role="dialog"
       aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
       style={{
         position: 'fixed',
         inset: 0,
@@ -72,7 +93,7 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h3 style={{ margin: 0 }}>{isLogin ? 'Welcome back' : 'Create your account'}</h3>
+          <h3 id={titleId} style={{ margin: 0 }}>{isLogin ? 'Welcome back' : 'Create your account'}</h3>
           <button
             className="icon-btn"
             aria-label="Close"
@@ -83,7 +104,7 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
           </button>
         </div>
 
-        <p style={{ marginTop: 6, color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>
+        <p id={descId} style={{ marginTop: 6, color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>
           {isLogin ? 'Sign in to manage your notes and uploads.' : 'Sign up to start uploading and saving notes.'}
         </p>
 
@@ -96,6 +117,8 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
+            ref={firstFieldRef}
           />
           <Input
             id="auth-password"
@@ -105,6 +128,7 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
             helpText={isLogin ? 'Use your account password.' : 'Minimum 6 characters recommended.'}
           />
           {error ? (
@@ -122,6 +146,7 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
               variant="outline"
               fullWidth
               onClick={() => setMode(isLogin ? 'signup' : 'login')}
+              aria-label={isLogin ? 'Switch to sign up' : 'Switch to sign in'}
             >
               {isLogin ? 'Need an account? Sign Up' : 'Have an account? Sign In'}
             </Button>

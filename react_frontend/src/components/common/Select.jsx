@@ -38,6 +38,10 @@ export default function Select({
     e.currentTarget.style.borderColor = error ? 'var(--color-error)' : 'var(--color-border)';
   };
 
+  const helpId = helpText ? `${id}-help` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [helpId, errorId].filter(Boolean).join(' ') || undefined;
+
   return (
     <div className={`select-field ${className}`} style={{ width: '100%' }}>
       {label && (
@@ -46,7 +50,7 @@ export default function Select({
         </label>
       )}
       <div style={{ position: 'relative' }}>
-        <select id={id} style={baseStyle} onFocus={onFocus} onBlur={onBlur} {...props}>
+        <select id={id} style={baseStyle} onFocus={onFocus} onBlur={onBlur} aria-invalid={!!error} aria-describedby={describedBy} {...props}>
           {children}
         </select>
         {/* Chevron indicator */}
@@ -66,10 +70,10 @@ export default function Select({
         </span>
       </div>
       {helpText && !error && (
-        <div style={{ marginTop: 6, fontSize: 'var(--font-xs)', color: 'var(--color-text-muted)' }}>{helpText}</div>
+        <div id={helpId} style={{ marginTop: 6, fontSize: 'var(--font-xs)', color: 'var(--color-text-muted)' }}>{helpText}</div>
       )}
       {error && (
-        <div role="alert" style={{ marginTop: 6, fontSize: 'var(--font-xs)', color: 'var(--color-error)' }}>{error}</div>
+        <div id={errorId} role="alert" style={{ marginTop: 6, fontSize: 'var(--font-xs)', color: 'var(--color-error)' }}>{error}</div>
       )}
     </div>
   );

@@ -61,6 +61,12 @@ export default function FloatingActionButton({ onUploadClick, onRequireAuth, vis
           e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
           e.currentTarget.style.filter = 'saturate(1)';
         }}
+        onFocus={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-ring), var(--shadow-lg)';
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        }}
       >
         +
       </button>

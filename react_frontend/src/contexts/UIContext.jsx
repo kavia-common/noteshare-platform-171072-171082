@@ -171,9 +171,9 @@ function ToastHost({ toasts, onClose }) {
               <div style={{ fontSize: 'var(--font-sm)' }}>{t.message}</div>
               <button
                 className="icon-btn"
-                aria-label="Dismiss"
+                aria-label="Dismiss notification"
                 onClick={() => onClose?.(t.id)}
-                title="Dismiss"
+                title="Dismiss notification"
               >
                 ✕
               </button>

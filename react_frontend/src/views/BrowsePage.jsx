@@ -12,7 +12,7 @@ export default function BrowsePage() {
             Advanced browse with deep filtering will be implemented after Home grid.
           </p>
           <div>
-            <Button variant="outline" onClick={() => (window.location.href = '/')}>Back to Home</Button>
+            <Button variant="outline" onClick={() => (window.location.href = '/')} aria-label="Go back to home">Back to Home</Button>
           </div>
         </section>
       </Container>

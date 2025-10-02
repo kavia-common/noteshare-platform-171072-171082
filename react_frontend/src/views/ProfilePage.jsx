@@ -32,7 +32,7 @@ export default function ProfilePage() {
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--color-text-muted)' }}>Loading session...</div>
+            <div style={{ color: 'var(--color-text-muted)' }} aria-live="polite">Loading session...</div>
           ) : user ? (
             <>
               <div className="surface" style={{ padding: 16 }}>

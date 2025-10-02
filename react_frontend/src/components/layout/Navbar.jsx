@@ -41,20 +41,26 @@ export default function Navbar({ mode = 'light', onToggleTheme }) {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" role="navigation" aria-label="Primary">
       <div className="container navbar-inner">
-        <Link to="/" className="brand" style={{ textDecoration: 'none' }}>
+        <Link to="/" className="brand" style={{ textDecoration: 'none' }} aria-label="Go to home">
           <span className="dot" />
           NoteShare
         </Link>
 
-        <form onSubmit={onSubmit} style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flex: 1, maxWidth: 680 }}>
+        <form
+          onSubmit={onSubmit}
+          role="search"
+          aria-label="Search notes form"
+          style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flex: 1, maxWidth: 680 }}
+        >
           <Input
             id="global-search"
             placeholder="Search notes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search notes"
+            autoComplete="off"
             style={{ flex: 1 }}
           />
           <Select
@@ -70,47 +76,43 @@ export default function Navbar({ mode = 'light', onToggleTheme }) {
             <option value="history">History</option>
             <option value="biology">Biology</option>
           </Select>
-          <Button type="submit" variant="secondary">Search</Button>
+          <Button type="submit" variant="secondary" aria-label="Run search">Search</Button>
         </form>
 
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginLeft: 10 }}>
           <Badge variant="primary" size="sm">Ocean Professional</Badge>
           <Button
             variant={location.pathname === '/upload' ? 'primary' : 'outline'}
+            aria-label="Upload a note"
             onClick={() => {
               if (!user) {
                 openAuth('login');
               } else {
-                // Open upload modal globally and navigate if on dedicated page
-                if (location.pathname !== '/upload') {
-                  openUpload();
-                } else {
-                  openUpload();
-                }
+                openUpload();
               }
             }}
           >
             Upload
           </Button>
-          <Button variant="subtle" onClick={() => navigate('/profile')}>
+          <Button variant="subtle" onClick={() => navigate('/profile')} aria-label="View profile">
             Profile
           </Button>
 
           {!user ? (
             <>
-              <Button variant="outline" onClick={() => openAuth('login')}>
+              <Button variant="outline" onClick={() => openAuth('login')} aria-label="Login">
                 Login
               </Button>
-              <Button variant="primary" onClick={() => openAuth('signup')}>
+              <Button variant="primary" onClick={() => openAuth('signup')} aria-label="Sign up">
                 Sign Up
               </Button>
             </>
           ) : (
             <>
-              <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>
+              <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }} aria-live="polite">
                 {user.email}
               </span>
-              <Button variant="outline" onClick={handleLogout}>
+              <Button variant="outline" onClick={handleLogout} aria-label="Logout">
                 Logout
               </Button>
             </>

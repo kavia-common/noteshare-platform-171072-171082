@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Select from '../common/Select';
@@ -44,6 +44,19 @@ export default function UploadModal({ open, onClose, onSuccess }) {
     ],
     []
   );
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape' && !busy) {
+        e.stopPropagation();
+        onDismiss();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, busy]);
 
   if (!open) return null;
 
@@ -185,11 +198,15 @@ export default function UploadModal({ open, onClose, onSuccess }) {
     </div>
   );
 
+  const titleId = 'upload-modal-title';
+  const descId = 'upload-modal-desc';
+
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Upload notes"
+      aria-labelledby={titleId}
+      aria-describedby={descId}
       style={{
         position: 'fixed',
         inset: 0,
@@ -214,7 +231,7 @@ export default function UploadModal({ open, onClose, onSuccess }) {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h3 style={{ margin: 0 }}>Upload a note (PDF)</h3>
+          <h3 id={titleId} style={{ margin: 0 }}>Upload a note (PDF)</h3>
           <button
             className="icon-btn"
             aria-label="Close"
@@ -228,7 +245,7 @@ export default function UploadModal({ open, onClose, onSuccess }) {
 
         {!user ? (
           <div className="surface" style={{ padding: 14 }}>
-            <p style={{ color: 'var(--color-text-muted)' }}>
+            <p id={descId} style={{ color: 'var(--color-text-muted)' }}>
               You must be logged in to upload notes.
             </p>
             <div>
@@ -238,12 +255,16 @@ export default function UploadModal({ open, onClose, onSuccess }) {
         ) : successNote ? (
           <SuccessView />
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12, marginTop: 8 }}>
+          <form onSubmit={handleSubmit} aria-describedby={descId} style={{ display: 'grid', gap: 12, marginTop: 8 }}>
+            <p id={descId} style={{ color: 'var(--color-text-muted)', margin: 0 }}>
+              Choose a PDF file, enter details, and upload.
+            </p>
             <div className="surface" style={{ padding: 14 }}>
-              <label style={{ display: 'block', fontSize: 'var(--font-sm)', marginBottom: 6, color: 'var(--color-text)' }}>
+              <label htmlFor="upload-file" style={{ display: 'block', fontSize: 'var(--font-sm)', marginBottom: 6, color: 'var(--color-text)' }}>
                 Select PDF
               </label>
               <input
+                id="upload-file"
                 ref={inputRef}
                 type="file"
                 accept="application/pdf,.pdf"
@@ -316,6 +337,10 @@ export default function UploadModal({ open, onClose, onSuccess }) {
                 </div>
                 <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
                   <div
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={progress}
                     style={{
                       width: `${progress}%`,
                       height: '100%',

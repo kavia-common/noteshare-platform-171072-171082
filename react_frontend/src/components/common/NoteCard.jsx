@@ -20,9 +20,12 @@ export default function NoteCard({ note, onOpen, onDownload }) {
     if (id) window.location.href = `/notes/${id}`;
   };
 
+  const cardTitle = title || 'Untitled';
+
   return (
     <article
       className="surface surface-animate"
+      aria-labelledby={`note-card-${id}-title`}
       style={{
         display: 'grid',
         gridTemplateRows: 'auto 1fr auto',
@@ -31,8 +34,8 @@ export default function NoteCard({ note, onOpen, onDownload }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10 }}>
-        <h3 style={{ margin: 0, fontSize: 'var(--font-md)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {title || 'Untitled'}
+        <h3 id={`note-card-${id}-title`} style={{ margin: 0, fontSize: 'var(--font-md)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {cardTitle}
         </h3>
         {category ? <Badge variant="neutral" size="sm">{category}</Badge> : null}
       </div>
@@ -63,8 +66,8 @@ export default function NoteCard({ note, onOpen, onDownload }) {
           ) : null}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          <Button variant="outline" size="sm" onClick={goOpen}>Open</Button>
-          <Button variant="primary" size="sm" onClick={() => onDownload?.(note)}>Download</Button>
+          <Button variant="outline" size="sm" onClick={goOpen} aria-label={`Open ${cardTitle}`} title="Open note">Open</Button>
+          <Button variant="primary" size="sm" onClick={() => onDownload?.(note)} aria-label={`Download ${cardTitle}`} title="Download note">Download</Button>
         </div>
       </div>
 

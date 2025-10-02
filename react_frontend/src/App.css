@@ -27,12 +27,11 @@
   top: 0;
   z-index: 20;
   backdrop-filter: saturate(140%) blur(6px);
-  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.72));
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.75));
   border-bottom: 1px solid var(--color-border);
 }
-
 [data-theme='dark'] .navbar {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.72));
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.75));
 }
 
 .navbar-inner {
@@ -49,6 +48,10 @@
   font-weight: var(--font-weight-bold);
   font-size: 18px;
   color: var(--color-text);
+}
+.brand:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-ring);
+  border-radius: var(--radius-md);
 }
 
 .brand .dot {
@@ -134,13 +137,19 @@ a:hover {
   border-color: var(--color-primary);
 }
 
-/* App hero placeholder */
+/* App hero with consistent gradient token usage */
 .hero {
   padding: 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(245,158,11,0.06));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+[data-theme='dark'] .hero {
+  background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(245,158,11,0.08));
 }
 
 .hero-title {

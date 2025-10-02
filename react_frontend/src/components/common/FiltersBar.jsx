@@ -45,7 +45,7 @@ export default function FiltersBar({ initial = {}, onApply, busy = false }) {
   };
 
   return (
-    <form onSubmit={submit} className="surface surface-animate" style={{ padding: 14, display: 'grid', gap: 10 }}>
+    <form onSubmit={submit} className="surface surface-animate" aria-label="Filters" style={{ padding: 14, display: 'grid', gap: 10 }}>
       <div className="grid grid-3">
         <Input
           id="home-q"
@@ -78,10 +78,10 @@ export default function FiltersBar({ initial = {}, onApply, busy = false }) {
       </div>
 
       <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-        <Button type="button" variant="subtle" onClick={() => { setQ(''); setCat(''); setTagsString(''); }} disabled={busy}>
+        <Button type="button" variant="subtle" onClick={() => { setQ(''); setCat(''); setTagsString(''); }} disabled={busy} aria-label="Reset filters">
           Reset
         </Button>
-        <Button type="submit" variant="primary" disabled={busy}>
+        <Button type="submit" variant="primary" disabled={busy} aria-label="Apply filters">
           Apply
         </Button>
       </div>

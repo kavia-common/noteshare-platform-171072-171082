@@ -84,7 +84,7 @@ export default function HomePage() {
         Try adjusting search terms, selecting another category, or clearing tags.
       </p>
       <div style={{ marginTop: 10 }}>
-        <Button variant="outline" onClick={() => { reset(); setPage(1); }}>
+        <Button variant="outline" onClick={() => { reset(); setPage(1); }} aria-label="Clear filters">
           Clear filters
         </Button>
       </div>
@@ -92,12 +92,12 @@ export default function HomePage() {
   );
 
   const ErrorState = () => (
-    <div className="surface surface-animate" role="alert" style={{ padding: 18, borderColor: 'rgba(239,68,68,0.35)' }}>
+    <div className="surface surface-animate" role="alert" aria-live="assertive" style={{ padding: 18, borderColor: 'rgba(239,68,68,0.35)' }}>
       <h3 style={{ marginTop: 0, color: 'var(--color-error)' }}>We couldn’t load notes</h3>
       <p style={{ color: 'var(--color-text-muted)' }}>{error}</p>
       <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-        <Button variant="outline" onClick={() => load()}>Retry</Button>
-        <Button variant="subtle" onClick={() => { reset(); setPage(1); }}>
+        <Button variant="outline" onClick={() => load()} aria-label="Retry loading notes">Retry</Button>
+        <Button variant="subtle" onClick={() => { reset(); setPage(1); }} aria-label="Reset filters">
           Reset filters
         </Button>
       </div>
@@ -106,14 +106,14 @@ export default function HomePage() {
 
   const Pagination = () => (
     <div className="surface surface-animate" style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }}>
+      <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }} aria-live="polite">
         {count} {count === 1 ? 'result' : 'results'} • Page {page} of {totalPages}
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
-        <Button variant="outline" disabled={loading || page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+        <Button variant="outline" disabled={loading || page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))} aria-label="Previous page">
           Previous
         </Button>
-        <Button variant="primary" disabled={loading || page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+        <Button variant="primary" disabled={loading || page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))} aria-label="Next page">
           Next
         </Button>
       </div>
@@ -129,8 +129,8 @@ export default function HomePage() {
             <p className="hero-subtitle">Upload PDFs, browse categories, and download notes from the community.</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="primary" onClick={() => (window.location.href = '/upload')}>Upload</Button>
-            <Button variant="outline" onClick={() => (window.location.href = '/browse')}>Browse</Button>
+            <Button variant="primary" onClick={() => (window.location.href = '/upload')} aria-label="Open upload page">Upload</Button>
+            <Button variant="outline" onClick={() => (window.location.href = '/browse')} aria-label="Open browse page">Browse</Button>
           </div>
         </section>
 
@@ -146,6 +146,10 @@ export default function HomePage() {
               </div>
               <div style={{ height: 8, background: 'rgba(59,130,246,0.12)', borderRadius: 999 }}>
                 <div
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={60}
                   style={{
                     width: '60%',
                     height: '100%',
