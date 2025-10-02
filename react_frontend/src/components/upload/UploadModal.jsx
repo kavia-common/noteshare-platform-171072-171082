@@ -30,6 +30,26 @@ export default function UploadModal({ open, onClose, onSuccess }) {
   const [successNote, setSuccessNote] = useState(null);
 
   const inputRef = useRef(null);
+  const [pageCount, setPageCount] = useState(null);
+
+  // Lazy loader for pdf.js from CDN to avoid bundler resolution issues.
+  const loadPdfJs = async () => {
+    if (window.__pdfjsLib) return window.__pdfjsLib;
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js';
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    }
+    window.__pdfjsLib = window.pdfjsLib;
+    return window.__pdfjsLib;
+  };
 
   const categories = useMemo(
     () => [
@@ -71,6 +91,7 @@ export default function UploadModal({ open, onClose, onSuccess }) {
     setProgress(0);
     setBusy(false);
     setSuccessNote(null);
+    setPageCount(null);
     if (inputRef.current) inputRef.current.value = '';
   };
 
@@ -166,6 +187,7 @@ export default function UploadModal({ open, onClose, onSuccess }) {
         tags: tags,
         file_path: `${bucket}/${path}`, // store as 'bucket/path' for clarity
         file_size: file.size,
+        ...(typeof pageCount === 'number' ? { page_count: pageCount } : {}),
       };
 
       const { data: note, error: dbErr } = await createNote(payload);
@@ -268,10 +290,24 @@ export default function UploadModal({ open, onClose, onSuccess }) {
                 ref={inputRef}
                 type="file"
                 accept="application/pdf,.pdf"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const f = e.target.files?.[0] || null;
                   setFile(f);
                   setError('');
+                  setPageCount(null);
+                  if (f && (f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))) {
+                    try {
+                      const arrayBuf = await f.arrayBuffer();
+                      const pdfjs = await loadPdfJs();
+                      const loadingTask = pdfjs.getDocument({ data: arrayBuf });
+                      const pdf = await loadingTask.promise;
+                      setPageCount(pdf.numPages || null);
+                    } catch (err) {
+                      // eslint-disable-next-line no-console
+                      console.warn('Failed to parse PDF for page count', err);
+                      setPageCount(null);
+                    }
+                  }
                 }}
                 disabled={busy}
               />
@@ -280,7 +316,10 @@ export default function UploadModal({ open, onClose, onSuccess }) {
               </div>
               {file ? (
                 <div style={{ marginTop: 8, fontSize: 'var(--font-sm)' }}>
-                  Selected: <strong>{file.name}</strong> ({Math.round(file.size / 1024)} KB)
+                  Selected: <strong>{file.name}</strong> ({Math.round(file.size / 1024)} KB){' '}
+                  {typeof pageCount === 'number' ? (
+                    <span style={{ color: 'var(--color-text-muted)' }}>• Pages: {pageCount}</span>
+                  ) : null}
                 </div>
               ) : null}
             </div>

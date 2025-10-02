@@ -8,6 +8,11 @@ This project provides a minimal React template with a clean, modern UI and minim
 - **Modern UI**: Clean, responsive design with KAVIA brand styling
 - **Fast**: Minimal dependencies for quick loading times
 - **Simple**: Easy to understand and modify
+- **Tag Chips & Multi-select**: Filter by multiple tags with keyboard-friendly chips UI
+- **Google OAuth**: Login with Google via Supabase
+- **Avatars**: Gravatar with initials fallback
+- **PDF Page Count**: Client-side extraction with pdfjs
+- **Analytics (optional)**: Best-effort view/download counters using a 'note_events' table if present
 
 ## Getting Started
 
@@ -54,10 +59,11 @@ We use Supabase for authentication, storage, and database access.
      ```
 
 4) Authentication UI
-   - An `AuthModal` provides Login / Sign Up with email/password.
-   - The `Navbar` shows Login/Sign Up if logged out, and email + Logout if logged in.
+   - An `AuthModal` provides Login / Sign Up with email/password and "Continue with Google" (Supabase OAuth).
+   - The `Navbar` shows Login/Sign Up if logged out, and avatar + email + Logout if logged in.
    - Session state is provided by `AuthProvider` and the `useAuth` hook.
    - Profile page shows current session info and a placeholder for user's notes.
+   - Set `REACT_APP_SITE_URL` to your deployed origin to ensure correct redirect for OAuth/email links.
 
 ## Customization
 

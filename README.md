@@ -12,6 +12,7 @@ This project uses Supabase for authentication, storage, and database. To configu
    - Populate:
      - REACT_APP_SUPABASE_URL
      - REACT_APP_SUPABASE_ANON_KEY
+     - (optional) REACT_APP_SITE_URL  # used for auth redirect in email + Google OAuth
    - Do not commit the .env file.
 
 3) Start the app:

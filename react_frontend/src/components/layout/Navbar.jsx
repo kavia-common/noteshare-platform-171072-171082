@@ -4,6 +4,7 @@ import Badge from '../common/Badge';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Select from '../common/Select';
+import Avatar from '../common/Avatar';
 import { useAuth } from '../../hooks/useAuth';
 import { useUI } from '../../contexts/UIContext';
 import { useSearchFilters } from '../../contexts/SearchFilterContext';
@@ -109,6 +110,7 @@ export default function Navbar({ mode = 'light', onToggleTheme }) {
             </>
           ) : (
             <>
+              <Avatar email={user.email} name={user.user_metadata?.full_name} size={28} ariaLabel="User avatar" />
               <span style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-sm)' }} aria-live="polite">
                 {user.email}
               </span>

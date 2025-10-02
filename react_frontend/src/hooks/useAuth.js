@@ -22,6 +22,7 @@ const AuthContext = createContext({
   signInWithPassword: async () => {},
   signUpWithPassword: async () => {},
   signOut: async () => {},
+  signInWithGoogle: async () => {},
 });
 
 // PUBLIC_INTERFACE
@@ -117,6 +118,25 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  // PUBLIC_INTERFACE
+  const signInWithGoogle = async () => {
+    /**
+     * Sign in using Google OAuth with Supabase.
+     * Redirect URL uses REACT_APP_SITE_URL or current origin.
+     */
+    setError(null);
+    const redirectTo = process.env.REACT_APP_SITE_URL || window.location.origin;
+    const { data, error: err } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo },
+    });
+    if (err) {
+      setError(err.message);
+      throw err;
+    }
+    return data;
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -126,6 +146,7 @@ export function AuthProvider({ children }) {
       signInWithPassword,
       signUpWithPassword,
       signOut,
+      signInWithGoogle,
     }),
     [user, session, loading, error]
   );

@@ -13,7 +13,7 @@ import { useAuth } from '../../hooks/useAuth';
  *  - defaultMode: 'login' | 'signup'
  */
 export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
-  const { signInWithPassword, signUpWithPassword, error } = useAuth();
+  const { signInWithPassword, signUpWithPassword, signInWithGoogle, error } = useAuth();
   const [mode, setMode] = useState(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -151,6 +151,22 @@ export default function AuthModal({ open, onClose, defaultMode = 'login' }) {
               {isLogin ? 'Need an account? Sign Up' : 'Have an account? Sign In'}
             </Button>
           </div>
+
+          <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '10px 0' }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+            <span style={{ fontSize: 'var(--font-xs)', color: 'var(--color-text-muted)' }}>OR</span>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+          </div>
+
+          <Button
+            type="button"
+            variant="secondary"
+            fullWidth
+            onClick={() => signInWithGoogle().catch(() => {})}
+            aria-label="Continue with Google"
+          >
+            Continue with Google
+          </Button>
         </form>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
-import { deleteNote, fetchNoteById, getSignedUrl } from '../lib/notesService';
+import { deleteNote, fetchNoteById, getSignedUrl, trackView, trackDownload } from '../lib/notesService';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import ErrorState from '../components/common/ErrorState';
@@ -50,6 +50,8 @@ export default function NoteDetailPage() {
         setNote(null);
       } else {
         setNote(data);
+        // Best-effort analytics
+        trackView(id).catch(() => {});
       }
     } catch (e) {
       setLoadError(e?.message || 'Failed to load note');
@@ -107,6 +109,8 @@ export default function NoteDetailPage() {
         setDownloading(false);
         return;
       }
+      // Best-effort analytics
+      trackDownload(id).catch(() => {});
       // Use a hidden anchor to trigger download
       const a = document.createElement('a');
       a.href = url;
